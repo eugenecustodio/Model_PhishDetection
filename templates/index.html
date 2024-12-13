@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Detection Model</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            color: #333;
+        }
+        .message-container, .form-container {
+            background-color: #f9f9f9;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+        h1, h2 {
+            color: #0056b3;
+        }
+        .team-list {
+            margin-top: 10px;
+            padding-left: 20px;
+        }
+        .team-list li {
+            margin: 5px 0;
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px 0;
+            width: 100%;
+            max-width: 400px;
+        }
+        button {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background-color: #003f7f;
+        }
+        #result {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="message-container">
+        <h1>Welcome to the Phishing Detection Model</h1>
+        <p>This model was created by <strong>Custodio, Eugene T</strong> under the research titled:</p>
+        <blockquote><em>"Evaluating Gradient Boosting for Phishing Detection: A Focus on URL Features"</em></blockquote>
+        <p>With contributions from:</p>
+        <ul class="team-list">
+            <li>Luzano, Johnwayne (for the datasets)</li>
+            <li>Escueta, Keith Roger</li>
+            <li>Dela Cruz, Engelbert</li>
+            <li>Narito, Kai Wency</li>
+        </ul>
+        <p>To run, please ensure that "https://" or "http://" is at the beginning of the URL.</p>
+    </div>
+
+    <div class="form-container">
+        <h2>Check a URL for Phishing</h2>
+        <form id="url-form">
+            <label for="url">Enter a URL to check:</label><br>
+            <input type="text" id="url" name="url" placeholder="https://example.com" required><br>
+            <button type="submit">Check URL</button>
+        </form>
+        <p id="result"></p>
+    </div>
+
+    <script>
+        const form = document.getElementById('url-form');
+        const resultParagraph = document.getElementById('result');
+
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Prevent form submission
+
+            const urlInput = document.getElementById('url').value;
+
+            // Call your backend API (Replace with your API endpoint)
+            const apiEndpoint = "http://127.0.0.1:5000/predict";
+
+            try {
+                const response = await fetch(apiEndpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ url: urlInput })
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Error: ${response.statusText}`);
+                }
+
+                const data = await response.json();
+                if (data.error) {
+                    resultParagraph.textContent = `Error: ${data.error}`;
+                } else {
+                    const result = data.result === "phishing" ? "likely a PHISHING URL" : "likely SAFE";
+                    resultParagraph.textContent = `The URL '${urlInput}' is ${result}.`;
+                }
+            } catch (error) {
+                resultParagraph.textContent = `Error: ${error.message}`;
+            }
+        });
+    </script>
+</body>
+</html>
+
