@@ -115,7 +115,7 @@ app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": "*"}})
 @app.route('/')
 def home():
-    return render_template('index.html')
+    return "Hello, World!"
 
 @app.route('/predict', methods=['POST'])
 def predict_url():
